@@ -11,10 +11,16 @@ const typingTestReducer = (state, action) => {
       return {
         ...state,
         isActive: true,
-        timer: 60,
+        timer: state.isActive ? state.timer : 60, // Keep the timer if already active
         word: action.payload,
-        typedWord: "",
+        typedWord: '',
       };
+      case "GENERATE_TEXT":
+        return{
+          ...state,
+          word: action.payload,
+          typedWord: "",
+        }
     case "TICK":
       return {
         ...state,
