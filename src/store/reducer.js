@@ -4,6 +4,7 @@ const initialState = {
   typedWord: "",
   isActive: false,
   validatedWords: [],
+  history: [],
   currentWordIndex: 0,
 };
 
@@ -42,7 +43,7 @@ const typingTestReducer = (state, action) => {
         ...state, 
         validatedWords:[
           ...state.validatedWords,
-          { word: state.typedWord, isValid: true },
+          { word: state.typedWord, isValid, },
         ],
         typedWord: "",
         currentWordIndex: state.currentWordIndex + 1,

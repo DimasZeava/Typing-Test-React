@@ -44,6 +44,9 @@ const Test = () => {
 
   const handleKeyPress = (e) => {
     if (state.isActive || !state.isActive) {
+      const typedWord = state.typedWord.trim();
+      const currentWord = state.word.split(' ')[state.currentWordIndex];
+      const isValid = typedWord === currentWord;
       if (e.key === "Backspace") {
         dispatch({
           type: "SET_TYPED_WORD",
@@ -53,6 +56,10 @@ const Test = () => {
         e.preventDefault();
         console.log(state.currentWordIndex);
         dispatch({ type: "VALIDATE_WORD" });
+         dispatch({
+        type: 'UPDATE_HISTORY',
+        payload: { typedWord, isValid }
+      });
       } else if (/^[a-zA-Z]$/.test(e.key)) {
         dispatch({
           type: "SET_TYPED_WORD",
@@ -75,60 +82,45 @@ const Test = () => {
       <div className="mb-4">
         {/* <h2 className="text-xl">Time: {state.timer}s</h2> */}
         <h2 className="text-xl">
-          Paragraph:
-          {state.word.split(' ').map((word, wordIndex) => (
-            <span key={wordIndex}>
-              {Array.from(word).map((char, charIndex) => (
-                <span
-                  key={charIndex}
-                  className={
-                    state.validatedWords[wordIndex] && state.validatedWords[wordIndex].isValid
-                      ? 'text-black'
-                      : state.currentWordIndex === wordIndex && state.typedWord[charIndex] === char
-                      ? 'text-black'
-                      : 'text-gray-400'
-                  }
-                >
-                  {char}
-                </span>
-              ))}
-              {' '}
-            </span>
-          ))}
-        </h2>
-        <h2 className="text-xl mt-2">
-          Typed Word:
-          {state.validatedWords.map((wordObj, index) => (
-            <span key={index} className="text-black">
-              {Array.from(wordObj.word).map((char, charIndex) => (
-                <span
-                  key={charIndex}
-                  className={
-                    wordObj.isValid && state.word.split(' ')[index][charIndex] === char
-                      ? 'text-black'
-                      : 'text-red-500'
-                  }
-                >
-                  {char}
-                </span>
-              ))}
-              {' '}
-            </span>
-          ))}
-          {Array.from(state.typedWord).map((char, index) => (
-            <span
-              key={index}
-              className={
-                state.word.split(' ')[state.currentWordIndex] &&
-                state.word.split(' ')[state.currentWordIndex][index] === char
-                  ? 'text-black'
-                  : 'text-red-500'
-              }
-            >
-              {char}
-            </span>
-          ))}
-        </h2>
+    Paragraph:
+    {state.word.split(" ").map((word, wordIndex) => {
+      const isCurrentWord = wordIndex === state.currentWordIndex;
+      const displayWord = isCurrentWord
+      ? Array.from(word).map((char, charIndex) => {
+          const userChar = state.typedWord[charIndex] || "";
+          return {
+            char: userChar || char,
+            isCorrect: userChar === char,
+            isTouched: userChar !== "",
+          };
+        })
+      : Array.from(word).map((char) => ({
+          char,
+          isCorrect: true,
+          isTouched: false,
+        }));
+
+    return (
+      <span key={wordIndex}>
+        {displayWord.map((item, charIndex) => (
+          <span
+            key={charIndex}
+            className={
+              item.isTouched
+                ? item.isCorrect
+                  ? "text-black"
+                  : "text-red-500"
+                : "text-gray-400"
+            }
+          >
+            {item.char}
+          </span>
+        ))}
+        {" "}
+      </span>
+    );
+  })}
+</h2>
       </div>
     </div>
   );
