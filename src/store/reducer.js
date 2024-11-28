@@ -36,13 +36,13 @@ const typingTestReducer = (state, action) => {
         typedWord: "",
       };
     case "VALIDATE_WORD" :
-      const currentWord = state.word[state.currentWordIndex];
+      const currentWord = state.word.split(' ')[state.currentWordIndex];
       const isValid = state.typedWord === currentWord;
       return {
         ...state, 
         validatedWords:[
           ...state.validatedWords,
-          { word: state.typedWord, isValid },
+          { word: state.typedWord, isValid: true },
         ],
         typedWord: "",
         currentWordIndex: state.currentWordIndex + 1,

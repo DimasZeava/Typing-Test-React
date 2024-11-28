@@ -51,6 +51,7 @@ const Test = () => {
         });
       } else if (e.key === " ") {
         e.preventDefault();
+        console.log(state.currentWordIndex);
         dispatch({ type: "VALIDATE_WORD" });
       } else if (/^[a-zA-Z]$/.test(e.key)) {
         dispatch({
@@ -66,7 +67,7 @@ const Test = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyPress);
     };
-  }, [state.typedWord, state.isActive]);
+  }, [state.typedWord]);
 
   return (
     <div className="App p-4">
@@ -98,7 +99,7 @@ const Test = () => {
         <h2 className="text-xl mt-2">
           Typed Word:
           {state.validatedWords.map((wordObj, index) => (
-            <span key={index}>
+            <span key={index} className="text-black">
               {Array.from(wordObj.word).map((char, charIndex) => (
                 <span
                   key={charIndex}
