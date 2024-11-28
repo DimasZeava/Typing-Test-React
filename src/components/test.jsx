@@ -24,6 +24,10 @@ const generateWords = (count) => {
 const Test = () => {
   const [state, dispatch] = useReducer(typingTestReducer, initialState);
 
+  useEffect(() => {
+    dispatch({ type: "START_TEST", payload: generateWords(20) });
+  }, []);
+
   // TIME FUNCTIONALITY
   // useEffect(() => {
   //   let interval = null;
@@ -39,32 +43,22 @@ const Test = () => {
   // }, [state.isActive, state.timer]);
 
   const handleKeyPress = (e) => {
-    if (!state.isActive) {
-      dispatch({ type: "START_TEST", payload: generateWords(20) });
-    }
-
-      if (state.isActive || !state.isActive) {
-        if (e.key === "Backspace") {
-          dispatch({
-            type: "SET_TYPED_WORD",
-            payload: state.typedWord.slice(0, -1),
-          });
-        } else if (e.key === " ") {
-          const typedWord = state.typedWord + e.key;
-          const word = state.word;
-          if (typedWord === word.substring(0, typedWord.length)) {
-            if (typedWord === word) {
-              dispatch({ type: "GENERATE_TEXT", payload: generateWords(20) });
-            }
-          }
-          dispatch({ type: "SET_TYPED_WORD", payload: typedWord });
-        } else if (/^[a-zA-Z]$/.test(e.key)) {
-          dispatch({
-            type: "SET_TYPED_WORD",
-            payload: state.typedWord + e.key,
-          });
-        }
+    if (state.isActive || !state.isActive) {
+      if (e.key === "Backspace") {
+        dispatch({
+          type: "SET_TYPED_WORD",
+          payload: state.typedWord.slice(0, -1),
+        });
+      } else if (e.key === " ") {
+        e.preventDefault();
+        dispatch({ type: "VALIDATE_WORD" });
+      } else if (/^[a-zA-Z]$/.test(e.key)) {
+        dispatch({
+          type: "SET_TYPED_WORD",
+          payload: state.typedWord + e.key,
+        });
       }
+    }
   };
 
   useEffect(() => {
@@ -81,24 +75,53 @@ const Test = () => {
         {/* <h2 className="text-xl">Time: {state.timer}s</h2> */}
         <h2 className="text-xl">
           Paragraph:
-          {Array.from(state.word).map((char, index) => (
-            <span
-              key={index}
-              className={
-                state.typedWord[index] === char ? "text-black" : "text-gray-400"
-              }
-            >
-              {char}
+          {state.word.split(' ').map((word, wordIndex) => (
+            <span key={wordIndex}>
+              {Array.from(word).map((char, charIndex) => (
+                <span
+                  key={charIndex}
+                  className={
+                    state.validatedWords[wordIndex] && state.validatedWords[wordIndex].isValid
+                      ? 'text-black'
+                      : state.currentWordIndex === wordIndex && state.typedWord[charIndex] === char
+                      ? 'text-black'
+                      : 'text-gray-400'
+                  }
+                >
+                  {char}
+                </span>
+              ))}
+              {' '}
             </span>
           ))}
         </h2>
         <h2 className="text-xl mt-2">
           Typed Word:
+          {state.validatedWords.map((wordObj, index) => (
+            <span key={index}>
+              {Array.from(wordObj.word).map((char, charIndex) => (
+                <span
+                  key={charIndex}
+                  className={
+                    wordObj.isValid && state.word.split(' ')[index][charIndex] === char
+                      ? 'text-black'
+                      : 'text-red-500'
+                  }
+                >
+                  {char}
+                </span>
+              ))}
+              {' '}
+            </span>
+          ))}
           {Array.from(state.typedWord).map((char, index) => (
             <span
               key={index}
               className={
-                state.word[index] === char ? "text-black" : "text-red-500"
+                state.word.split(' ')[state.currentWordIndex] &&
+                state.word.split(' ')[state.currentWordIndex][index] === char
+                  ? 'text-black'
+                  : 'text-red-500'
               }
             >
               {char}

@@ -3,6 +3,8 @@ const initialState = {
   word: "",
   typedWord: "",
   isActive: false,
+  validatedWords: [],
+  currentWordIndex: 0,
 };
 
 const typingTestReducer = (state, action) => {
@@ -14,12 +16,8 @@ const typingTestReducer = (state, action) => {
         // timer: state.isActive ? state.timer : 60,
         word: action.payload,
         typedWord: "",
-      };
-    case "GENERATE_TEXT":
-      return {
-        ...state,
-        word: action.payload,
-        typedWord: "",
+        validatedWords: [],
+        currentWordIndex: 0,
       };
     case "TICK":
       return {
@@ -36,6 +34,18 @@ const typingTestReducer = (state, action) => {
         ...state,
         word: action.payload,
         typedWord: "",
+      };
+    case "VALIDATE_WORD" :
+      const currentWord = state.word[state.currentWordIndex];
+      const isValid = state.typedWord === currentWord;
+      return {
+        ...state, 
+        validatedWords:[
+          ...state.validatedWords,
+          { word: state.typedWord, isValid },
+        ],
+        typedWord: "",
+        currentWordIndex: state.currentWordIndex + 1,
       };
     case "STOP_TEST":
       return {
