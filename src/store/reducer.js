@@ -1,5 +1,5 @@
 const initialState = {
-  timer: 60,
+  // timer: 60,
   word: "",
   typedWord: "",
   isActive: false,
@@ -11,16 +11,16 @@ const typingTestReducer = (state, action) => {
       return {
         ...state,
         isActive: true,
-        timer: state.isActive ? state.timer : 60, // Keep the timer if already active
+        // timer: state.isActive ? state.timer : 60,
         word: action.payload,
-        typedWord: '',
+        typedWord: "",
       };
-      case "GENERATE_TEXT":
-        return{
-          ...state,
-          word: action.payload,
-          typedWord: "",
-        }
+    case "GENERATE_TEXT":
+      return {
+        ...state,
+        word: action.payload,
+        typedWord: "",
+      };
     case "TICK":
       return {
         ...state,
@@ -35,6 +35,7 @@ const typingTestReducer = (state, action) => {
       return {
         ...state,
         word: action.payload,
+        typedWord: "",
       };
     case "STOP_TEST":
       return {
